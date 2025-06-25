@@ -5,6 +5,7 @@ export interface PrintJob {
   pageList?: number[];
   copies: number;
   doubleSided: boolean;
+  landscape: boolean;
 }
 
 // interface Options {

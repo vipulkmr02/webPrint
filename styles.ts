@@ -1,10 +1,11 @@
-import { Dimensions, Platform, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 const width = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   root: {
     marginHorizontal: "auto",
+    fontFamily: 'Manrope',
     backgroundColor: "white",
     height: "100%",
     width: "100%",
@@ -26,7 +27,8 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   header: {
-    fontSize: 25,
+    // fontFamily: "Merriweather",
+    fontSize: width < 768 ? 25 : 35,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     fontWeight: "bold",
     textAlign: "center",
+    // fontFamily: "Manrope",
     backgroundColor: "black",
     color: "white",
     borderRadius: 50,
@@ -43,6 +46,7 @@ const styles = StyleSheet.create({
     boxShadow: "0 0 5px",
   },
   disabled: {
+    boxShadow: "none",
     backgroundColor: "gray",
   },
   layoutPrint: {
@@ -127,4 +131,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export { styles };
+const colors = {
+  gray: '#808080',
+  black: '#000',
+  white: '#fff',
+}
+
+export { styles, colors };

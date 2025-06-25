@@ -8,16 +8,17 @@
     "scheme": "wp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.hardhead.webPrint"
-    },
+    "platforms": [
+      "android",
+      "web"
+    ],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hardhead.webPrint"
+      "package": "com.jurassicPark.webPrint",
+      "useCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +39,15 @@
       ],
       [
         "expo-document-picker"
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Merriweather/Merriweather-VariableFont_opsz,wdth,wght.ttf",
+            "./assets/fonts/Manrope/Manrope-VariableFont_wght.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
@@ -50,6 +60,16 @@
       "eas": {
         "projectId": "9a6e0ea3-817b-446c-a0e9-35629bee4573"
       }
-    }
+    },
+    "fonts": [
+      {
+        "name": "Merriweather",
+        "path": "./assets/fonts/Merriweather/Merriweather-VariableFont_opsz,wdth,wght.ttf"
+      },
+      {
+        "name": "Manrope",
+        "path": "./assets/fonts/Manrope/Manrope-VariableFont_wght.ttf"
+      }
+    ]
   }
 }

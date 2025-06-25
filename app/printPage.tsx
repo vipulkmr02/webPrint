@@ -1,12 +1,26 @@
-import { View, Text, Switch, TextInput } from "react-native";
+import { View, Text, Switch, TextInput, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "../styles";
+import { colors, styles } from "../styles";
 import { useContext, useState } from "react";
 import { appContext } from "./index";
 import { Link, router } from "expo-router";
 import Header from "@/components/header";
 import { PrintJob } from "@/interfaces/printJob";
-import fetch from 'expo-fetch';
+import { fetch } from 'expo/fetch';
+
+
+const localStyles = StyleSheet.create({
+  copyButtons: {
+    fontSize: 20,
+    color: colors.black,
+    cursor: "pointer",
+    userSelect: "none",
+  },
+  copyButtonsDisabled: {
+    color: 'transparent'
+  }
+})
+
 
 export default function printPage() {
   const AppContext = useContext(appContext);
@@ -18,9 +32,11 @@ export default function printPage() {
   const serverAddr = `http://${HOST}:${PORT}`;
 
   function submitJob() {
+    setLoading(true);
     const job: PrintJob = {
       copies: copies,
       doubleSided: doubleSide,
+      landscape: landscape,
       fileName: AppContext.file?.name ?? '<no-file>',
       printer: AppContext.printer?.name ?? ' '
     }
@@ -34,7 +50,6 @@ export default function printPage() {
       )
     );
 
-    console.log('sending job to', serverAddr + '/fileUpload')
     fetch(serverAddr + '/fileUpload', {
       method: 'POST',
       body: formData,
@@ -42,106 +57,105 @@ export default function printPage() {
         "Accept": "application/json",
       }
     }).then((res) => {
-      console.log('response', res)
       if (res.ok) {
-        console.log('all ok');
         doubleSide && router.navigate('/evenPagePrint') || router.navigate('/success');
       } else {
         console.error("error in sending file")
       }
-    })
+    }).finally(() => setLoading(false))
   }
 
+  const [loading, setLoading] = useState(false);
+
   if (AppContext.file !== null) {
-    return <SafeAreaView style={styles.root}>
-      <Header heading="Print" />
-      <View style={[styles.layoutPrint]}>
-        <View>
-          <View
-            style={[
-              styles.twoEnds,
-              styles.fullWidth,
-              styles.subheader, {
-                marginBottom: 30,
-              }
-            ]}
-          >
-            <Text style={[styles.header]}>File Selected</Text>
-            <Text style={[styles.highlight, { width: 150 }]}>
-              {AppContext.file.name}
-            </Text>
-          </View>
+    return loading
+      && <ActivityIndicator animating={loading} style={{ height: "100%" }} size="large" />
+      || <SafeAreaView style={styles.root}>
+        <Header heading="Easy Print" />
+        <View style={[styles.layoutPrint]}>
+          <View>
+            <View
+              style={[
+                styles.fullWidth,
+                styles.subheader, {
+                  marginBottom: 30,
+                }
+              ]}
+            >
+              <Text style={[styles.subheader]}>File:</Text>
+              <Text>
+                {AppContext.file.name}
+              </Text>
+            </View>
 
-          <Text style={styles.subheader}>Print Options</Text>
-          <View className="form">
+            <Text style={styles.subheader}>Print Options</Text>
 
-            <View style={styles.formInput}>
-              <Text>Copies</Text>
-              <View style={styles.twoEnds}>
-                <Text style={[
-                  styles.button,
-                  copies <= 1 ? styles.disabled : {},
-                  { fontFamily: 'monospace' }
-                ]} onPress={() => {
-                  if (copies > 1) {
-                    setCopies(copies - 1)
-                  }
-                }}> - </Text>
-                <TextInput
-                  value={copies.toString() === "NaN" ? "" : copies.toString()}
-                  style={[
-                    styles.input,
-                    styles.copiesInput
-                  ]}
-                  onChange={e => {
-                    setCopies(parseInt(e.nativeEvent.text))
-                  }}
-                  keyboardType="numeric"
-                />
-                <Text style={[
-                  styles.button,
-                  copies >= 99 ? styles.disabled : {},
-                  { fontFamily: 'monospace' }
-                ]} onPress={() => {
-                  if (copies) {
-                    setCopies(copies + 1)
-                  }
-                }}> + </Text>
+            <View className="form">
+              <View style={styles.formInput}>
+                <Text>Copies</Text>
+                <View style={styles.twoEnds}>
+                  <Text style={[
+                    localStyles.copyButtons,
+                    copies <= 1 ? localStyles.copyButtonsDisabled : {},
+                  ]} onPress={() => {
+                    if (copies > 1) {
+                      setCopies(copies - 1)
+                    }
+                  }}> - </Text>
+                  <TextInput
+                    value={copies.toString() === "NaN" ? "" : copies.toString()}
+                    style={[
+                      styles.input,
+                      styles.copiesInput
+                    ]}
+                    onChange={e => {
+                      setCopies(parseInt(e.nativeEvent.text))
+                    }}
+                    keyboardType="numeric"
+                  />
+                  <Text style={[
+                    localStyles.copyButtons,
+                    copies >= 99 ? localStyles.copyButtonsDisabled : {},
+                  ]} onPress={() => {
+                    if (copies) {
+                      setCopies(copies + 1)
+                    }
+                  }}> + </Text>
+                </View>
               </View>
+              <View style={styles.formInput}>
+                <Text>Landscape</Text>
+
+                <Switch
+                  value={landscape}
+                  onValueChange={() => {
+                    setLandscape(!landscape)
+                  }}
+                />
+              </View>
+
+              <View style={styles.formInput}>
+                <Text>Double Sided</Text>
+
+                <Switch
+                  value={doubleSide}
+                  onValueChange={() => {
+                    setDoubleSide(!doubleSide)
+                  }}
+                />
+              </View>
+
             </View>
-            <View style={styles.formInput}>
-              <Text>Landscape</Text>
+          </View>
 
-              <Switch
-                value={landscape}
-                onValueChange={() => {
-                  setLandscape(!landscape)
-                }}
-              />
-            </View>
-
-            <View style={styles.formInput}>
-              <Text>Double Sided</Text>
-
-              <Switch
-                value={doubleSide}
-                onValueChange={() => {
-                  setDoubleSide(!doubleSide)
-                }}
-              />
-            </View>
-
+          <View>
+            <Text
+              style={[styles.button, styles.button]}
+              onPress={submitJob}
+            > Print </Text>
           </View>
         </View>
-
-        <View>
-          <Text
-            style={[styles.button, styles.button]}
-            onPress={submitJob}
-          > Print </Text>
-        </View>
-      </View>
-    </SafeAreaView>;
+      </SafeAreaView>;
 
   } else {
     return <SafeAreaView style={[styles.root, styles.errorPage]}>

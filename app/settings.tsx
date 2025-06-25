@@ -8,6 +8,7 @@ import { styles } from "@/styles";
 
 function Settings() {
   const AppContext = useContext(appContext);
+  AppContext.heading = 'Settings';
 
   const labelMap = new Map<keyof typeof AppContext.settings, string>([
     ['DoubleSided', 'Always ON'],
@@ -18,8 +19,8 @@ function Settings() {
   const [serverConfig, setServerConfig] = useState(AppContext.settings.serverConfig);
 
   return <SafeAreaView style={styles.root}>
+      <Header heading="Settings" />
     <View>
-      <Header heading="Settings"></Header>
       <View style={styles.centered}>
         {
           (Object.keys(AppContext.settings) as Array<keyof typeof AppContext.settings>).map(
@@ -27,7 +28,7 @@ function Settings() {
               if (x === 'serverConfig') {
                 return <View key='serverConfig' style={[styles.responsiveContainer, styles.settingsRows, { flexDirection: 'column' }]}>
                   <Text
-                    style={[styles.header, styles.highlight, styles.alignStart]}
+                    style={[styles.header, styles.alignStart]}
                     key={x}> {labelMap.get(x)} </Text>
                   <View style={[styles.fullWidth, styles.twoEnds]}>
                     <Text style={styles.settingsKey}> Host </Text>
@@ -62,7 +63,7 @@ function Settings() {
               return <View key='Duplex Options'
                 style={styles.settingsRows}
               >
-                <Text style={[styles.header, styles.highlight]}>Duplex Printing</Text>
+                <Text style={[styles.header, styles.alignStart]}>Duplex Printing</Text>
                 <View style={[styles.fullWidth, styles.twoEnds]}>
                   <Text style={styles.settingsKey} key={x}> {labelMap.get(x)} </Text>
                   <Switch

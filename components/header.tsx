@@ -1,6 +1,6 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text  } from 'react-native'
 import React from 'react'
-import { styles } from '@/styles'
+import { colors, styles } from '@/styles'
 import { router } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -22,9 +22,15 @@ export default function Header(props: { heading: string }) {
       <MaterialIcons
         name="arrow-back"
         size={buttonSize}
-        color={(() => !router.canGoBack() ? 'transparent' : 'black')()}
-        style={{ padding: 0, cursor: 'pointer' }}
+        color={(() => !router.canGoBack() ? colors.gray : colors.black)()}
+        style={{ cursor: 'pointer' }}
         onPress={() => router.canGoBack() ? router.back() : null}
+      />
+      <MaterialIcons
+        name="home"
+        size={buttonSize}
+        style={{ cursor: 'pointer' }}
+        onPress={() => router.dismissTo('/')}
       />
       <Text style={[styles.header, { padding: 0, flexGrow: 1 }]}>
         {props.heading}
